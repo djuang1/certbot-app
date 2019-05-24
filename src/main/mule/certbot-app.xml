@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="bca85b2e-034f-42b7-8614-abfac23e2335" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<os:object-store name="Object_Store" doc:name="Object store" doc:id="6f26603b-d19b-4299-9593-1384e8de5006" />
+	<flow name="acme-challenge-flow" doc:id="8e904334-db0e-48ad-a5e2-28fa4208b51c" >
+		<http:listener doc:name="/.well-known/*" doc:id="f3b7c5e7-5ffd-4662-8cd4-e36bc1316d20" config-ref="HTTP_Listener_config" path="/.well-known/*"/>
+		<logger level="INFO" doc:name="Logger" doc:id="8b48f6b3-5e75-4ad8-b0c3-d119865c8a3f" />
+		<os:retrieve doc:name="Retrieve" doc:id="b08bb674-0ed1-4c1c-9e56-2940072bd7f2" key='#[output application/json import * from dw::core::Strings --- substringAfterLast(attributes.requestUri,"/")]' objectStore="Object_Store">
+			<os:default-value ><![CDATA[#["1"]]]></os:default-value>
+		</os:retrieve>
+		<logger level="INFO" doc:name="Logger" doc:id="86e3804c-7d0b-47bb-8de5-f54e4be6d626" />
+		<ee:transform doc:name="Transform Message" doc:id="7b0acbfc-8443-4f55-aa29-bd3d4a625a37" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="lets-encryptFlow1" doc:id="57a05013-a065-47ba-87ac-1041fea5ce91" >
+		<http:listener doc:name="/set-challenge" doc:id="1dc2c4df-6085-44ae-93a1-ae47d557cdeb" config-ref="HTTP_Listener_config" path="/set-challenge"/>
+		<logger level="INFO" doc:name="Logger" doc:id="eeaf2c69-e2fd-44fb-bef4-17ca562bba62" />
+		<os:store doc:name="Store" doc:id="dc07f3e9-8479-4746-b763-f59917367833" key="#[attributes.queryParams.key]" objectStore="Object_Store">
+			<os:value ><![CDATA[#[attributes.queryParams.value]]]></os:value>
+		</os:store>
+		<os:retrieve-all-keys doc:name="Retrieve all keys" doc:id="36fba802-7f2f-427e-97a3-994cdeda48e4" objectStore="Object_Store"/>
+		<ee:transform doc:name="Transform Message" doc:id="90e03249-c4ee-4631-bead-c6530b33e28c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
