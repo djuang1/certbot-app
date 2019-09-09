@@ -20,7 +20,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<ee:transform doc:name="Transform Message" doc:id="7b0acbfc-8443-4f55-aa29-bd3d4a625a37" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
+output text/plain
 ---
 payload]]></ee:set-payload>
 			</ee:message>
