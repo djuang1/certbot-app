@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<app.runtime>4.2.1</app.runtime>
-		<mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
+		<mule.maven.plugin.version>3.3.5</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -46,7 +46,7 @@
     	<dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-http-connector</artifactId>
-            <version>1.5.7</version>
+            <version>1.5.14</version>
             <classifier>mule-plugin</classifier>
         </dependency>
     </dependencies>
